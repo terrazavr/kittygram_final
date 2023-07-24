@@ -1,0 +1,36 @@
+version: '3'
+
+volumes:
+  pg_data1_production:
+  static_volume:
+  media_volume:
+
+services:
+  db:
+    image: postgres:13
+    env_file: .env
+    volumes:
+      - pg_data1_production:/var/lib/postgresql/data
+
+  backend:
+    image: terrazavr/kittygram_backend
+    volumes:
+      - static_volume:/backend_static
+      - media_volume:/app/media/
+    env_file: .env
+
+  frontend:
+    env_file: .env
+    image: terrazavr/kittygram_frontend
+    command: cp -r /app/build/. /static/
+    volumes:
+      - static_volume:/static
+
+  gateway:
+    image: terrazavr/kittygram_gateway
+    env_file: .env
+    ports:
+      - 9000:80
+    volumes:
+      - static_volume:/static
+      - media_volume:/app/media/
