@@ -13,21 +13,23 @@ services:
       - pg_data1_production:/var/lib/postgresql/data
 
   backend:
-    image: terrazavr/kittygram_backend
+    image: terrazavr/kittygram_backend:latest
     volumes:
       - static_volume:/backend_static
       - media_volume:/app/media/
     env_file: .env
+    depends_on:
+      - db
 
   frontend:
     env_file: .env
-    image: terrazavr/kittygram_frontend
+    image: terrazavr/kittygram_frontend:latest
     command: cp -r /app/build/. /static/
     volumes:
       - static_volume:/static
 
   gateway:
-    image: terrazavr/kittygram_gateway
+    image: terrazavr/kittygram_gateway:latest
     env_file: .env
     ports:
       - 9000:80
